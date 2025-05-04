@@ -50,3 +50,5 @@ COL_TOTAL_POWER = "TotalPower"
 
 # Rolling statistics
 DEFAULT_WINDOW_DAYS = 14
+
+# TODO: Add Poincare and constants for the graph thresholds.

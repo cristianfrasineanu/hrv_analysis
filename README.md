@@ -42,10 +42,37 @@ The script calculates z-scores for key metrics to assess readiness:
 
 - Warning threshold: Below 0.75 (reduced complexity)
 
+## Setup
+
+1. **Create a virtual environment:**
+
+   ```sh
+   python -m venv venv
+   ```
+
+2. **Activate the virtual environment:**
+   - On Windows:
+
+     ```sh
+     venv\Scripts\activate
+     ```
+
+   - On macOS/Linux:
+
+     ```sh
+     source venv/bin/activate
+     ```
+
+3. **Install dependencies:**
+
+   ```sh
+   pip install -r requirements.txt
+   ```
+
 ## Usage
 
 ```bash
-python batch_rr.py /path/to/elitehrv/export [--excel] [--window WINDOW]
+./batch_rr.py /path/to/elitehrv/export [--excel] [--window WINDOW_SIZE]
 ```
 
 > **Note:** The folder must contain all the EliteHRV .txt files that you want to process. Each file should be named in the format "YYYY-MM-DD HH-MM-SS.txt" (e.g., "2024-03-20 07-30-00.txt").
