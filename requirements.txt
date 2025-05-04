@@ -1,0 +1,7 @@
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+antropy>=0.1.6
+nolds>=0.5.2
+openpyxl>=3.1.0
+matplotlib>=3.7.0 
