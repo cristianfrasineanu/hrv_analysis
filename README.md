@@ -69,4 +69,4 @@ While this tool aims to provide similar insights to Kubios Premium, it is not a 
 
 ## Data Source
 
-This script processes RR interval data exported from the EliteHRV app. You can export your data from EliteHRV's settings menu.
+This script processes RR interval data exported from the EliteHRV app. You can export your data from EliteHRV's [settings menu](https://help.elitehrv.com/article/49-exporting-raw-r-r-intervals-or-interbeat-intervals-ibis).
