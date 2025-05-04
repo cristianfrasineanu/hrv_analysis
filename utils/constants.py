@@ -24,10 +24,12 @@ LOW_THRESHOLD = 0.0033
 HIGH_THRESHOLD = 0.40
 
 # RR interval validation thresholds
-MIN_RR_MS = 300  # Minimum RR interval in milliseconds
-MAX_RR_MS = 2000  # Maximum RR interval in milliseconds
+MIN_RR_MS = 300
+MAX_RR_MS = 2000
 MAX_JUMP_MS = 500  # Maximum allowed difference between consecutive RR intervals
-MAX_ARTIFACT_PERCENT = 3  # Maximum allowed percentage of artifacts
+MAX_ARTIFACT_PERCENT = (
+    5  # Maximum allowed percentage of artifacts. This is the Kubios default.
+)
 
 # Output file names
 OUTPUT_CSV = "all_readiness_metrics.csv"
@@ -45,3 +47,6 @@ COL_PNN50_PCT = "pNN50_pct"
 COL_LF_POWER = "LF_power"
 COL_HF_POWER = "HF_power"
 COL_TOTAL_POWER = "TotalPower"
+
+# Rolling statistics
+DEFAULT_WINDOW_DAYS = 14
