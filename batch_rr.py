@@ -1,4 +1,4 @@
-#!./venv/Scripts/python.exe
+#!/usr/bin/env python
 """
 batch_rr.py  Bulk-process RR interval data to calculate
 heart rate variability (HRV) metrics.

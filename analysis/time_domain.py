@@ -10,7 +10,6 @@ from utils.constants import (
     COL_RMSSD_MS,
     COL_SAMPEN,
     COL_SDNN_MS,
-    DEFAULT_WINDOW_DAYS,
 )
 
 
@@ -37,16 +36,14 @@ def time_domain(rr: np.ndarray) -> Tuple[float, float, float, float, float, floa
     return mean_rr, mean_hr, sdnn, rmssd, pnn50, lnrmssd
 
 
-def compute_rolling_stats(
-    df: pd.DataFrame, window: int = DEFAULT_WINDOW_DAYS
-) -> pd.DataFrame:
+def compute_rolling_stats(df: pd.DataFrame, window: int) -> pd.DataFrame:
     """Compute rolling means and z-scores for key HRV metrics.
 
     Parameters
     ----------
     df : pd.DataFrame
         DataFrame with HRV metrics
-    window : int, default=DEFAULT_WINDOW_DAYS
+    window : int
         Window size for rolling mean in days
 
     Returns
