@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!./venv/Scripts/python.exe
 """
 batch_rr.py  Bulk-process RR interval data to calculate
 heart rate variability (HRV) metrics.
@@ -10,6 +10,8 @@ calculate various HRV metrics:
 - Non-linear: Sample Entropy, Detrended Fluctuation Analysis
 
 You can get these files from the EliteHRV app via the "Export Data" feature in Settings.
+Other apps may work, warranted they are exported in the same format,
+but I have only tested it with EliteHRV.
 
 Usage
 -----
@@ -18,7 +20,7 @@ $ python batch_rr.py /path/to/folder/with/txt [--excel] [--window WINDOW]
 Arguments:
     folder                  Path to folder containing EliteHRV .txt files
     --excel                 Also write .xlsx with rolling stats and visualizations
-    --window WINDOW         Window size in days for rolling statistics (default: 14)
+    --window WINDOW         Window size in days for rolling statistics
 """
 
 import argparse
@@ -31,15 +33,16 @@ from typing import List
 import pandas as pd
 
 import utils.constants as c
-
-from . import (
+from analysis import (
     nonlinear,
-    read_rr_intervals,
-    save_metrics,
     time_domain,
     welch_psd,
 )
-from .utils.hrv_types import HRVMetrics, OptionalHRVMetrics
+from data_io import (
+    read_rr_intervals,
+    save_metrics,
+)
+from utils.hrv_types import HRVMetrics, OptionalHRVMetrics
 
 
 def process_rr_file(path: str) -> OptionalHRVMetrics:
