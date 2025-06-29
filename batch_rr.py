@@ -92,9 +92,7 @@ def process_rr_file(path: str) -> OptionalHRVMetrics:
     }
 
 
-def main(
-    directory: str, to_excel: bool = False, window: int = c.DEFAULT_WINDOW_DAYS
-) -> None:
+def main(directory: str, to_excel: bool = False, window: int = c.DEFAULT_WINDOW_DAYS) -> None:
     """Process all RR interval files in directory and save metrics.
 
     Parameters

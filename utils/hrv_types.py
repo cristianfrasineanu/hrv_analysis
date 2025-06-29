@@ -11,7 +11,6 @@ import pandas as pd
 # Basic types
 RRIntervals: TypeAlias = np.ndarray
 
-# Metric types
 # mean_rr, mean_hr, sdnn, rmssd, pnn50, lnrmssd
 TimeDomainMetrics: TypeAlias = tuple[float, float, float, float, float, float]
 FreqDomainMetrics: TypeAlias = tuple[float, float, float, float]  # lf, hf, tp, lf_hf

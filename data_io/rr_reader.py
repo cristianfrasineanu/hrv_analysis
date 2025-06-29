@@ -1,12 +1,11 @@
 import warnings
-from typing import List
 
 import numpy as np
 
 import utils.constants as c
 
 
-def read_rr_intervals(fp: str) -> List[float]:
+def read_rr_intervals(fp: str) -> np.ndarray:
     """Read and validate RR intervals from an EliteHRV .txt file.
 
     Parameters
@@ -16,7 +15,7 @@ def read_rr_intervals(fp: str) -> List[float]:
 
     Returns
     -------
-    List[float]
+    np.ndarray
         Array of valid RR intervals in milliseconds
 
     Raises
@@ -52,6 +51,6 @@ def read_rr_intervals(fp: str) -> List[float]:
         warnings.warn(
             f"Too many artifacts ({artifact_percent:.1f}%) in {fp}. Will skip the reading."
         )
-        return []
+        return np.array([])
 
-    return rr[valid_mask].tolist()
+    return rr[valid_mask]

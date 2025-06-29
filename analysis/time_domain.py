@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import numpy as np
 import pandas as pd
 
@@ -13,7 +11,7 @@ from utils.constants import (
 )
 
 
-def time_domain(rr: np.ndarray) -> Tuple[float, float, float, float, float, float]:
+def time_domain(rr: np.ndarray) -> tuple[float, float, float, float, float, float]:
     """Calculate time domain HRV metrics from RR intervals.
 
     Parameters
@@ -33,7 +31,7 @@ def time_domain(rr: np.ndarray) -> Tuple[float, float, float, float, float, floa
     mean_rr = np.mean(rr)
     mean_hr = 60000 / mean_rr
     lnrmssd = np.log(rmssd)
-    return mean_rr, mean_hr, sdnn, rmssd, pnn50, lnrmssd
+    return (float(mean_rr), float(mean_hr), float(sdnn), float(rmssd), float(pnn50), float(lnrmssd))
 
 
 def compute_rolling_stats(df: pd.DataFrame, window: int) -> pd.DataFrame:
@@ -64,7 +62,10 @@ def compute_rolling_stats(df: pd.DataFrame, window: int) -> pd.DataFrame:
         if col in df.columns
     ]
 
-    rolling_mean = df[key_metrics].rolling(window=window, min_periods=7).mean().shift(1)
+    # Shift by 1 to avoid look-ahead bias - use only past data for current day's calculations
+    rolling_mean = pd.DataFrame(df[key_metrics].rolling(window=window, min_periods=7).mean()).shift(
+        1
+    )
     rolling_std = (
         df[key_metrics]
         .rolling(window=window, min_periods=7)
