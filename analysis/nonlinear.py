@@ -1,11 +1,9 @@
-from typing import Tuple
-
 import numpy as np
 from antropy import sample_entropy
 from nolds import dfa
 
 
-def nonlinear(rr: np.ndarray) -> Tuple[float, float]:
+def nonlinear(rr: np.ndarray) -> tuple[float, float]:
     """Calculate non-linear HRV metrics.
 
     Parameters
@@ -15,7 +13,7 @@ def nonlinear(rr: np.ndarray) -> Tuple[float, float]:
 
     Returns
     -------
-    Tuple[float, float]
+    tuple[float, float]
         Tuple of (sampen, alpha1)
     """
     try:
@@ -23,7 +21,8 @@ def nonlinear(rr: np.ndarray) -> Tuple[float, float]:
     except Exception:
         sampen = np.nan
     try:
-        alpha1 = dfa(rr, nvals=np.arange(4, 17))
+        result = dfa(rr, nvals=np.arange(4, 17), debug_data=False)
+        alpha1 = float(result[0] if isinstance(result, tuple) else result)
     except Exception:
         alpha1 = np.nan
     return sampen, alpha1

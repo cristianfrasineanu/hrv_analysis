@@ -21,7 +21,7 @@ def time_domain(rr: np.ndarray) -> tuple[float, float, float, float, float, floa
 
     Returns
     -------
-    Tuple[float, float, float, float, float, float]
+    tuple[float, float, float, float, float, float]
         Tuple of (mean_rr, mean_hr, sdnn, rmssd, pnn50, lnrmssd)
     """
     diff_rr = np.diff(rr)

@@ -3,7 +3,7 @@
 This module contains type aliases to make the code more readable and maintainable.
 """
 
-from typing import Dict, TypeAlias, Union
+from typing import TypeAlias, Union
 
 import numpy as np
 import pandas as pd
@@ -17,5 +17,5 @@ FreqDomainMetrics: TypeAlias = tuple[float, float, float, float]  # lf, hf, tp, 
 NonlinearMetrics: TypeAlias = tuple[float, float]  # sampen, alpha1
 
 # Dictionary types
-HRVMetrics: TypeAlias = Dict[str, Union[float, pd.Timestamp]]
+HRVMetrics: TypeAlias = dict[str, Union[float, pd.Timestamp]]
 OptionalHRVMetrics: TypeAlias = Union[HRVMetrics, None]

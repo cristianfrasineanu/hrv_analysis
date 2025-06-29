@@ -28,7 +28,6 @@ import glob
 import os
 import sys
 import warnings
-from typing import List
 
 import pandas as pd
 
@@ -108,7 +107,7 @@ def main(directory: str, to_excel: bool = False, window: int = c.DEFAULT_WINDOW_
     if not files:
         sys.exit("No HRV input files found in %s" % directory)
 
-    rows: List[HRVMetrics] = []
+    rows: list[HRVMetrics] = []
     last_date = None
 
     for path in files:
