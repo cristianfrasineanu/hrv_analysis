@@ -27,9 +27,7 @@ HIGH_THRESHOLD = 0.40
 MIN_RR_MS = 300
 MAX_RR_MS = 2000
 MAX_JUMP_MS = 500  # Maximum allowed difference between consecutive RR intervals
-MAX_ARTIFACT_PERCENT = (
-    5  # Maximum allowed percentage of artifacts. This is the Kubios default.
-)
+MAX_ARTIFACT_PERCENT = 5  # Maximum allowed percentage of artifacts. This is the Kubios default.
 
 # Output file names
 OUTPUT_CSV = "all_readiness_metrics.csv"
@@ -50,5 +48,22 @@ COL_TOTAL_POWER = "TotalPower"
 
 # Rolling statistics
 DEFAULT_WINDOW_DAYS = 14
+
+# Supported file extensions
+SUPPORTED_EXTENSIONS = ["*.txt", "*.csv"]
+
+# String constants for RR reader error messages and column names
+RR_COLUMN_NAME = "rr"
+RR_COLUMN_NOT_FOUND_MSG = "'RR' column not found in {}"
+TOO_MANY_ARTIFACTS_MSG = "Too many artifacts ({:.1f}%) in {}. Skipped."
+ARTIFACT_FOUND_MSG = "Artifact found in {}: RR={:.1f}ms at index {}"
+FILE_NOT_FOUND_MSG = "File not found: {}"
+NOT_A_FILE_MSG = "Path is not a file: {}"
+NO_NUMERIC_DATA_MSG = "No valid numeric RR data found in {}"
+
+# String constants for error messages and column names used in batch_rr.py
+DATE_NOT_FOUND_MSG = "Date not found in filename: {}. Using file modification date {} instead."
+TOO_FEW_RR_INTERVALS_MSG = "{}: too few RR intervals ({}), skipped."
+LARGE_GAP_DETECTED_MSG = "Large gap detected: {} days between {} and {}. Skipping previous reading from {}"
 
 # TODO: Add Poincare and constants for the graph thresholds.

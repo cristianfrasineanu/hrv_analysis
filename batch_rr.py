@@ -3,22 +3,25 @@
 batch_rr.py  Bulk-process RR interval data to calculate
 heart rate variability (HRV) metrics.
 
-This script processes RR interval data files in EliteHRV .txt format to
-calculate various HRV metrics:
+This script processes RR interval data files to calculate various HRV metrics that
+help you assess your autonomic nervous system balance:
 - Time domain: SDNN, RMSSD, pNN50, mean HR/RR
 - Frequency domain: LF, HF, Total Power, LF/HF ratio
 - Non-linear: Sample Entropy, Detrended Fluctuation Analysis
 
-You can get these files from the EliteHRV app via the "Export Data" feature in Settings.
-Other apps may work, warranted they are exported in the same format,
-but I have only tested it with EliteHRV.
+Supported file formats:
+- Plain text files (.txt): Each line or comma-separated value is an RR interval in milliseconds
+- CSV files (.csv): Must contain a column named 'RR' (case-insensitive) with RR intervals in milliseconds
+
+You can get .txt files from the EliteHRV app via the "Export Data" feature in Settings.
+CSV files are supported from apps like ECGApp and other HRV monitoring tools.
 
 Usage
 -----
-$ python batch_rr.py /path/to/folder/with/txt [--excel] [--window WINDOW]
+$ python batch_rr.py /path/to/folder/with/files [--excel] [--window WINDOW]
 
 Arguments:
-    folder                  Path to folder containing EliteHRV .txt files
+    folder                  Path to folder containing RR interval files (.txt or .csv)
     --excel                 Also write .xlsx with rolling stats and visualizations
     --window WINDOW         Window size in days for rolling statistics
 """
@@ -44,6 +47,50 @@ from data_io import (
 from utils.hrv_types import HRVMetrics, OptionalHRVMetrics
 
 
+def _find_hrv_files(directory: str) -> list[str]:
+    """Find all supported HRV files in the given directory.
+
+    Parameters
+    ----------
+    directory : str
+        Directory to search for files
+
+    Returns
+    -------
+    list[str]
+        List of file paths sorted by timestamp (earliest first)
+    """
+    files = []
+    for pattern in c.SUPPORTED_EXTENSIONS:
+        files.extend(glob.glob(os.path.join(directory, pattern)))
+
+    # Sort by extracted timestamp instead of filename
+    return sorted(files, key=_extract_date)
+
+
+def _extract_date(path: str) -> pd.Timestamp:
+    """Extract date from file path, using filename pattern or file modification time as fallback.
+
+    Parameters
+    ----------
+    path : str
+        Path to the file
+
+    Returns
+    -------
+    pd.Timestamp
+        Normalized date (midnight) for the file
+    """
+    date_match = c.FILENAME_RE.search(os.path.basename(path))
+    if date_match:
+        return pd.to_datetime(date_match.group(1)).normalize()
+    else:
+        mtime = os.path.getmtime(path)
+        date = pd.to_datetime(mtime, unit="s").normalize()
+        warnings.warn(c.DATE_NOT_FOUND_MSG.format(path, date.date()))
+        return date
+
+
 def process_rr_file(path: str) -> OptionalHRVMetrics:
     """Process a single RR interval file and return its metrics.
 
@@ -57,17 +104,9 @@ def process_rr_file(path: str) -> OptionalHRVMetrics:
     OptionalHRVMetrics
         Dictionary containing the date and calculated metrics, or None if processing fails
     """
-    date_match = c.FILENAME_RE.search(os.path.basename(path))
-    if not date_match:
-        warnings.warn(f"Date not found in filename: {path}")
-        return None
-
-    # Parse only the date part and normalize to midnight
-    date = pd.to_datetime(date_match.group(1)).normalize()
-
     rr = read_rr_intervals(path)
     if len(rr) < c.MIN_RR_INTERVALS:
-        warnings.warn(f"{path}: too few RR intervals ({len(rr)}), skipped.")
+        warnings.warn(c.TOO_FEW_RR_INTERVALS_MSG.format(path, len(rr)))
         return None
 
     mean_rr, mean_hr, sdnn, rmssd, pnn50, lnrmssd = time_domain(rr)
@@ -75,7 +114,7 @@ def process_rr_file(path: str) -> OptionalHRVMetrics:
     sampen, alpha1 = nonlinear(rr)
 
     return {
-        "Date": date,
+        "Date": _extract_date(path),
         c.COL_MEAN_RR_MS: mean_rr,
         c.COL_MEAN_HR_BPM: mean_hr,
         c.COL_SDNN_MS: sdnn,
@@ -103,7 +142,7 @@ def main(directory: str, to_excel: bool = False, window: int = c.DEFAULT_WINDOW_
     window : int, default=14
         Window size in days for rolling statistics
     """
-    files = sorted(glob.glob(os.path.join(directory, "*.txt")))
+    files = _find_hrv_files(directory)
     if not files:
         sys.exit("No HRV input files found in %s" % directory)
 
@@ -111,20 +150,16 @@ def main(directory: str, to_excel: bool = False, window: int = c.DEFAULT_WINDOW_
     last_date = None
 
     for path in files:
-        date_match = c.FILENAME_RE.search(os.path.basename(path))
-        if not date_match:
-            warnings.warn(f"Date not found in filename: {path}")
-            continue
-
-        current_date = pd.to_datetime(date_match.group(1)).normalize()
+        current_date = _extract_date(path)
 
         # Check for gaps between readings
         if last_date is not None:
             days_gap = (current_date - last_date).days
             if days_gap > c.MAX_DAYS_GAP:
                 warnings.warn(
-                    f"Large gap detected: {days_gap} days between {last_date.date()} "
-                    f"and {current_date.date()}. Skipping previous reading from {last_date.date()}"
+                    c.LARGE_GAP_DETECTED_MSG.format(
+                        days_gap, last_date.date(), current_date.date(), last_date.date()
+                    )
                 )
                 # Remove the last metrics since there was a gap
                 if rows:
@@ -145,7 +180,7 @@ def main(directory: str, to_excel: bool = False, window: int = c.DEFAULT_WINDOW_
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("folder", help="folder with EliteHRV .txt files")
+    parser.add_argument("folder", help="folder with RR interval files (.txt or .csv)")
     parser.add_argument(
         "--excel",
         action="store_true",
